@@ -11,7 +11,7 @@ export default function Dashboard() {
   const handleAnalyze = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:3000/process", { text: inputText });
+      const response = await axios.post("https://moodlens-v2.onrender.com/process", { text: inputText });
       setEmotionData(response.data.response);
     } catch (err) {
       console.error("Error:", err);
