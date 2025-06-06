@@ -1,4 +1,3 @@
-
 /* Global CSS for App component */
 * {
   margin: 0;
@@ -117,16 +116,16 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 16px; /* Updated from 12px */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.04); /* Updated shadow */
+  border: 1px solid rgba(226, 232, 240, 0.8); /* Updated border opacity */
   backdrop-filter: blur(8px);
   padding: 2.5rem;
   transition: all 0.3s ease;
 }
 
 .result-container:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08), 0 6px 12px rgba(0, 0, 0, 0.06); /* Updated hover shadow */
 }
 
 .result-title {
@@ -154,9 +153,9 @@ body {
 .chart-section {
   margin-bottom: 3rem;
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 12px; /* Updated from 10px */
   padding: 1.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.03); /* Updated shadow */
   border: 1px solid #e2e8f0;
 }
 

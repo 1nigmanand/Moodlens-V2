@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Gemini AI setup
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash", generationConfig: { temperature: 0.0,topP: 1} });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash", generationConfig: { temperature: 0,topP: 1} });
 
 // Utility to normalize and map emotion keys to canonical set
 const emotionMap = {
@@ -41,7 +41,20 @@ function normalizeEmotion(emotion) {
 
 app.post("/process", async (req, res) => {
     try {
-        const text = req.body.text || "";
+        let text = req.body.text || ""; // Use let to allow reassignment
+        console.log("Original text received on backend (length " + text.length + "):", JSON.stringify(text));
+
+        // Normalize the text
+        // 1. Replace Windows newlines with Unix newlines
+        text = text.replace(/\r\n/g, '\n');
+        // 2. Trim leading/trailing whitespace from the whole text
+        text = text.trim();
+        // 3. Trim leading/trailing whitespace from each line and ensure consistent newlines
+        text = text.split('\n').map(line => line.trim()).join('\n');
+        // 4. Optional: Replace multiple spaces with a single space (be cautious with this as it might alter intended formatting in some texts)
+        // text = text.replace(/\s{2,}/g, ' ');
+
+        console.log("Normalized text on backend (length " + text.length + "):", JSON.stringify(text));
 
         if (!text) {
             return res.status(400).json({ error: "Text input is required." });
