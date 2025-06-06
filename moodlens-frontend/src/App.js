@@ -1,10 +1,19 @@
-import Dashboard from "./Dashboard";
+import Dashboard from "./components/Dashboard";
+import ResultPage from "./components/ResultPage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import './styles/Global.css';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Dashboard />
-    </div>
+    <Router>
+      <header className="header">Moodlens Dashboard</header>
+      <main className="container">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/result" element={<ResultPage />} />
+        </Routes>
+      </main>
+    </Router>
   );
 }
 

@@ -84,6 +84,32 @@ app.use(express.json());
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash", generationConfig: { temperature: 0.0,topP: 1} });
 
+// Utility to normalize and map emotion keys to canonical set
+const emotionMap = {
+  happiness: 'Happy',
+  happy: 'Happy',
+  sadness: 'Sad',
+  sad: 'Sad',
+  anger: 'Angry',
+  angry: 'Angry',
+  excitement: 'Excited',
+  excited: 'Excited',
+  calm: 'Calm',
+  anxiety: 'Anxious',
+  anxious: 'Anxious',
+  frustration: 'Frustration',
+  disappointment: 'Disappointment',
+  fear: 'Fear',
+  joy: 'Joy',
+  love: 'Love',
+  surprise: 'Surprise',
+};
+function normalizeEmotion(emotion) {
+  if (!emotion) return '';
+  const trimmed = emotion.trim().toLowerCase();
+  return emotionMap[trimmed] || (trimmed.charAt(0).toUpperCase() + trimmed.slice(1));
+}
+
 app.post("/process", async (req, res) => {
     try {
         const text = req.body.text || "";
@@ -128,7 +154,15 @@ app.post("/process", async (req, res) => {
             return res.status(500).json({ error: "Invalid JSON format received from Gemini" });
         }
 
-        res.json({ response: parsedResponse });
+        // Normalize all emotion keys in the response
+        const normalizedResponse = {};
+        for (const key in parsedResponse) {
+            if (Object.hasOwnProperty.call(parsedResponse, key)) {
+                normalizedResponse[normalizeEmotion(key)] = parsedResponse[key];
+            }
+        }
+
+        res.json({ response: normalizedResponse });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
