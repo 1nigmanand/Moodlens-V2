@@ -1,8 +1,6 @@
 import { useState } from "react";
 import EmotionSentencesPage from "./EmotionSentencesPage";
-
-
-
+import "../styles/Global.css";
 
 const borderColors = {
   'Happy': '#10b981',
@@ -44,14 +42,14 @@ export default function EmotionCard({ emotion, details }) {
   const [showSentences, setShowSentences] = useState(false);
 
   // Use backend-provided values, fallback to frontend defaults if missing
-  const bgStyle = details.color ? { background: details.color } : {};
-  const borderColor = details.borderColor || borderColors[normalizeEmotion(emotion)] || borderColors['Disappointment'];
+  const bgStyle = details.color ? { background: details.color } : { background: '#4A5568' }; // Added a default bg
+  const borderColorFromDetails = details.borderColor || borderColors[normalizeEmotion(emotion)] || borderColors['Disappointment'];
   const emoji = details.emoji || emojis[normalizeEmotion(emotion)] || '😐';
 
   const cardStyle = {
     ...bgStyle,
-    border: `4px solid ${borderColor}`,
-    display: showSentences ? 'none' : 'flex',
+    border: `4px solid ${borderColorFromDetails}`,
+    // Removed: display: showSentences ? 'none' : 'flex',
   };
 
   const handleCardClick = () => setShowSentences(true);
@@ -64,21 +62,18 @@ export default function EmotionCard({ emotion, details }) {
     <>
       {/* Card */}
       <div
-        className={
-          'w-full max-w-xs h-64 rounded-1xl shadow-2xl text-white p-6 flex flex-col justify-center items-center hover:scale-105 hover:shadow-3xl transition-all duration-300 cursor-pointer bg-white/10 backdrop-blur-lg border'
-        }
+        className="emotion-card" // Simplified to use a single class for Global.css
         onClick={handleCardClick}
         style={cardStyle}
       >
-        <div className="flex flex-col items-center w-full h-full">
-          <div className="text-5xl mb-2 drop-shadow-lg">{emoji}</div>
-          <h2 className="text-2xl font-bold mb-1 text-center drop-shadow">{emotion}</h2>
-          <div className="bg-white/30 rounded-full px-4 py-2 mt-2 mb-2 shadow-inner">
-            <p className="text-lg font-semibold text-gray-900">Count: {details.count}</p>
-          </div>
-          <div className="flex-1 flex items-end w-full">
-            <p className="text-xs opacity-80 text-center w-full">Click to see details</p>
-          </div>
+        {/* Removed inner full-height/width div, .emotion-card handles layout */}
+        <div className="emotion-card-emoji">{emoji}</div>
+        <h2 className="emotion-card-title">{emotion}</h2>
+        <div className="emotion-card-count-wrapper">
+          <p className="emotion-card-count">Count: {details.count}</p>
+        </div>
+        <div className="emotion-card-footer">
+          <p>Click to see details</p>
         </div>
       </div>
       {/* Fullscreen Sentences Page */}

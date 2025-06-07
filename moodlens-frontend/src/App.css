@@ -43,6 +43,8 @@ html, body, #root {
   }
 }
 
+/* Default React App styles - commenting out unused ones */
+/*
 .App {
   text-align: center;
 }
@@ -81,6 +83,7 @@ html, body, #root {
     transform: rotate(360deg);
   }
 }
+*/
 
 /* App-specific styles */
 

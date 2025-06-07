@@ -42,7 +42,7 @@ export default function Dashboard() {
       return;
     }
 
-    console.log("Text being sent to backend:", JSON.stringify(textToAnalyze)); // Log the exact text
+    // console.log("Text being sent to backend:", JSON.stringify(textToAnalyze)); // Log the exact text
 
     try {
       const response = await axios.post("https://moodlens-v2.onrender.com/process", { text: textToAnalyze });

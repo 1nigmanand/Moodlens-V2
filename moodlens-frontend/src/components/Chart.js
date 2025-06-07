@@ -31,10 +31,10 @@ export default function Chart({ data }) {
       },
     ],
   };
-
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    aspectRatio: 2, // Width to height ratio
     plugins: {
       legend: {
         display: false,
@@ -43,11 +43,14 @@ export default function Chart({ data }) {
         display: true,
         text: "Emotion Analysis",
         font: {
-          size: 24,
+          size: 20,
           weight: "bold",
         },
-        color: "hsl(var(--foreground))",
-        padding: 20,
+        color: "#374151",
+        padding: {
+          top: 10,
+          bottom: 20
+        },
       },
       tooltip: {
         backgroundColor: "rgba(0, 0, 0, 0.8)",
@@ -58,19 +61,20 @@ export default function Chart({ data }) {
         cornerRadius: 12,
         displayColors: false,
       },
-    },
-    scales: {
+    },    scales: {
       y: {
         beginAtZero: true,
+        max: Math.max(...counts) + 2, // Set a reasonable max value
         grid: {
           color: "rgba(156, 163, 175, 0.2)",
           drawBorder: false,
         },
         ticks: {
-          color: "hsl(var(--muted-foreground))",
+          color: "#6b7280",
           font: {
             size: 12,
           },
+          stepSize: 1, // Ensure integer steps
         },
       },
       x: {
@@ -78,11 +82,12 @@ export default function Chart({ data }) {
           display: false,
         },
         ticks: {
-          color: "hsl(var(--muted-foreground))",
+          color: "#6b7280",
           font: {
-            size: 14,
+            size: 12,
             weight: 500,
           },
+          maxRotation: 0, // Keep labels horizontal
         },
       },
     },
@@ -91,10 +96,11 @@ export default function Chart({ data }) {
       easing: "easeInOutQuart",
     },
   };
-
   return (
-    <div className="w-full h-96 p-6 bg-card rounded-xl border shadow-lg">
-      <Bar data={chartData} options={options} />
+    <div className="chart-container">
+      <div className="chart-wrapper">
+        <Bar data={chartData} options={options} />
+      </div>
     </div>
   );
 }

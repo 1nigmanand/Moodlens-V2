@@ -18,24 +18,34 @@ const getBorderColor = (emotion) => borderColors[emotion] || borderColors['Disap
 
 export default function EmotionSentencesPage({ emotion, details, onClose }) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-60" style={{backdropFilter: 'blur(2px)'}}>
-      <div className="bg-white rounded-xl shadow-2xl p-6 max-w-lg w-full relative animate-fade-in" onClick={e => e.stopPropagation()}>
-        <button className="absolute top-4 right-6 text-3xl text-gray-400 hover:text-gray-700 font-bold" onClick={onClose}>&times;</button>
-        <div className="flex items-center gap-3 mb-4"> {/* Increased gap for emoji */}
-          {details?.emoji && <span className="text-2xl">{details.emoji}</span>}
-          <h3 className="text-xl font-bold text-gray-800">{emotion} Details</h3>
+    <div 
+      className="emotion-modal-overlay" 
+      onClick={onClose}
+    >
+      <div className="emotion-modal-content" onClick={e => e.stopPropagation()}>
+        {/* Close Button */}
+        <button className="emotion-modal-close" onClick={onClose}>
+          ✕
+        </button>
+        
+        {/* Header */}
+        <div className="emotion-modal-header">
+          {details?.emoji && <span className="emotion-modal-emoji">{details.emoji}</span>}
+          <h3 className="emotion-modal-title">{emotion} Details</h3>
         </div>
-        <div className="space-y-3 max-h-80 overflow-y-auto pr-2"> {/* Added pr-2 for scrollbar spacing */}
+        
+        {/* Content */}
+        <div className="emotion-modal-body">
           {details.situation.map((s, idx) => (
             <div
               key={idx}
-              className="bg-gray-50 rounded-lg p-3 border-l-4" /* Changed to border-l-4 for emphasis */
-              style={{ borderColor: details?.borderColor || getBorderColor(emotion), borderStyle: 'solid' }}
+              className="emotion-sentence-card"
+              style={{ borderColor: details?.borderColor || getBorderColor(emotion) }}
             >
-              <p className="font-medium text-gray-700 text-sm mb-1">
+              <p className="emotion-sentence-person">
                 {s.name_of_person}
               </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="emotion-sentence-reason">
                 {s.reason}
               </p>
             </div>
