@@ -7,6 +7,8 @@ export default function Dashboard() {
   const [inputText, setInputText] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [selectedFolderFiles, setSelectedFolderFiles] = useState([]);
+  const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -15,34 +17,69 @@ export default function Dashboard() {
     if (file) {
       setSelectedFile(file);
       setFileName(file.name);
-      // Optionally, clear inputText if a file is selected
-      // setInputText(""); 
+      setInputText(""); 
+      setSelectedFolderFiles([]);
+      setFolderName("");
+    }
+  };
+
+  const handleFolderChange = async (event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const textFiles = Array.from(files).filter(file => file.name.endsWith('.txt'));
+      if (textFiles.length === 0) {
+        alert("No .txt files found in the selected folder.");
+        setFolderName("");
+        setSelectedFolderFiles([]);
+        return;
+      }
+      const firstFilePath = textFiles[0].webkitRelativePath;
+      const folderPath = firstFilePath.substring(0, firstFilePath.lastIndexOf('/'));
+      setFolderName(folderPath || "Selected Folder");
+      setSelectedFolderFiles(textFiles);
+      setInputText("");
+      setSelectedFile(null);
+      setFileName("");
     }
   };
 
   const handleAnalyze = async () => {
     setLoading(true);
     let textToAnalyze = inputText;
+    let source = "text input";
 
-    if (selectedFile) {
+    if (selectedFolderFiles.length > 0) {
+      source = `folder: ${folderName}`;
+      let combinedText = "";
+      for (const file of selectedFolderFiles) {
+        try {
+          const fileText = await file.text();
+          combinedText += fileText + "\n\n";
+        } catch (error) {
+          console.error(`Error reading file ${file.name}:`, error);
+          alert(`Error reading file ${file.name}. Skipping this file.`);
+        }
+      }
+      textToAnalyze = combinedText.trim();
+    } else if (selectedFile) {
+      source = `file: ${fileName}`;
       try {
         textToAnalyze = await selectedFile.text();
       } catch (error) {
         console.error("Error reading file:", error);
         setLoading(false);
-        // Handle file reading error (e.g., show a message to the user)
         alert("Error reading file. Please ensure it is a valid text file.");
         return;
       }
     }
 
     if (!textToAnalyze.trim()) {
-      alert("Please enter text or select a file to analyze.");
+      alert("Please enter text, select a file, or select a folder with .txt files to analyze.");
       setLoading(false);
       return;
     }
 
-    // console.log("Text being sent to backend:", JSON.stringify(textToAnalyze)); // Log the exact text
+    console.log(`Analyzing content from ${source}`);
 
     try {
       const response = await axios.post("https://moodlens-v2.onrender.com/process", { text: textToAnalyze });
@@ -54,14 +91,28 @@ export default function Dashboard() {
     setLoading(false);
   };
 
-  const canAnalyze = () => (inputText.trim() !== "" || selectedFile !== null) && !loading;
+  const clearSelection = () => {
+    setInputText("");
+    setSelectedFile(null);
+    setFileName("");
+    setSelectedFolderFiles([]);
+    setFolderName("");
+    const fileInput = document.getElementById('file-input');
+    if(fileInput) fileInput.value = null;
+    const folderInput = document.getElementById('folder-input');
+    if(folderInput) folderInput.value = null;
+  };
+
+  const canAnalyze = () => (inputText.trim() !== "" || selectedFile !== null || selectedFolderFiles.length > 0) && !loading;
+  const isInputDisabled = !!selectedFile || selectedFolderFiles.length > 0;
+  const isFileInputDisabled = inputText.trim() !== "" || selectedFolderFiles.length > 0;
+  const isFolderInputDisabled = inputText.trim() !== "" || !!selectedFile;
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-card">
         <h1 className="dashboard-title">Student Emotion Dashboard</h1>
         
-        {/* Text Area Input */}
         <label className="dashboard-label" htmlFor="text-input">Enter text for emotional analysis</label>
         <textarea
           id="text-input"
@@ -71,11 +122,14 @@ export default function Dashboard() {
           value={inputText}
           onChange={(e) => {
             setInputText(e.target.value);
-            // Optionally, clear selectedFile if text is entered
-            // setSelectedFile(null);
-            // setFileName("");
+            if (e.target.value.trim() !== "") {
+              setSelectedFile(null);
+              setFileName("");
+              setSelectedFolderFiles([]);
+              setFolderName("");
+            }
           }}
-          disabled={!!selectedFile} // Disable textarea if a file is selected
+          disabled={isInputDisabled}
         />
         <div className="character-counter">
           <span>{inputText.length} characters</span>
@@ -83,35 +137,59 @@ export default function Dashboard() {
 
         <div className="or-divider">OR</div>
 
-        {/* File Input */}
-        <label className="dashboard-label" htmlFor="file-input">Upload a text file (.txt)</label>
-        <div className="file-input-container">
-          <input 
-            type="file" 
-            id="file-input" 
-            className="dashboard-file-input"
-            accept=".txt" 
-            onChange={handleFileChange} 
-            disabled={inputText.trim() !== ""} // Disable file input if text is entered
-          />
-          <label htmlFor="file-input" className="dashboard-file-label">
-            {fileName || "Choose a file..."}
-          </label>
+        {/* Container for side-by-side file/folder inputs */}
+        <div className="upload-options-container">
+          {/* Single File Upload Section */}
+          <div className="upload-option">
+            <label className="dashboard-label" htmlFor="file-input">Upload a single text file (.txt)</label>
+            <div className="file-input-container">
+              <input 
+                type="file" 
+                id="file-input" 
+                className="dashboard-file-input"
+                accept=".txt" 
+                onChange={handleFileChange} 
+                disabled={isFileInputDisabled}
+              />
+              <label htmlFor="file-input" className={`dashboard-file-label ${isFileInputDisabled ? 'disabled' : ''}`}>
+                {fileName || "Choose a file..."}
+              </label>
+            </div>
+            {selectedFile && (
+              <button onClick={clearSelection} className="clear-file-button">
+                Clear Selection
+              </button>
+            )}
+          </div>
+
+          {/* Vertical Divider - Optional, can be styled with CSS */}
+          {/* <div className="vertical-or-divider">OR</div> */}
+
+          {/* Folder Upload Section */}
+          <div className="upload-option">
+            <label className="dashboard-label" htmlFor="folder-input">Upload a folder with .txt files</label>
+            <div className="file-input-container">
+              <input 
+                type="file" 
+                id="folder-input" 
+                className="dashboard-file-input"
+                webkitdirectory="true"
+                directory="true"
+                multiple
+                onChange={handleFolderChange} 
+                disabled={isFolderInputDisabled}
+              />
+              <label htmlFor="folder-input" className={`dashboard-file-label ${isFolderInputDisabled ? 'disabled' : ''}`}>
+                {folderName || "Choose a folder..."}
+              </label>
+            </div>
+            {selectedFolderFiles.length > 0 && (
+              <button onClick={clearSelection} className="clear-file-button">
+                Clear Selection
+              </button>
+            )}
+          </div>
         </div>
-        {selectedFile && (
-          <button 
-            onClick={() => {
-              setSelectedFile(null);
-              setFileName("");
-              // Manually reset the file input value if needed
-              const fileInput = document.getElementById('file-input');
-              if(fileInput) fileInput.value = null;
-            }}
-            className="clear-file-button"
-          >
-            Clear File
-          </button>
-        )}
 
         <button
           onClick={handleAnalyze}

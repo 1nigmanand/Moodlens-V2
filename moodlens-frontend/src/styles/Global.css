@@ -460,6 +460,85 @@ body {
   }
 }
 
+/* New styles for dashboard layout */
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align to top for longer content */
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f0f4f8; /* Light background for the page */
+}
+
+.or-divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  font-weight: bold;
+  color: #718096; /* gray-500 */
+}
+
+/* New styles for side-by-side upload options */
+.upload-options-container {
+  display: flex;
+  justify-content: space-between; /* Distribute space between the two options */
+  align-items: stretch; /* Make options same height */
+  gap: 1rem; /* Space between the two upload sections */
+  margin-bottom: 1.5rem; /* Space before the analyze button */
+}
+
+.upload-option {
+  flex: 1; /* Each option takes equal width */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content within each option box */
+  padding: 1rem;
+  border: 1px solid #e2e8f0; /* Light border for each option box */
+  border-radius: 0.375rem; /* md rounded corners */
+  background-color: #fff; /* White background for option boxes */
+}
+
+.file-input-container {
+  position: relative;
+  margin-bottom: 0.5rem; /* Space below the input/label combo */
+  width: 100%; /* Make container take full width of .upload-option */
+}
+
+.dashboard-file-input {
+  /* ... existing styles ... */
+  width: 100%; /* Ensure input takes full width */
+}
+
+.dashboard-file-label {
+  /* ... existing styles ... */
+  display: block; /* Make label take full width */
+  width: 100%;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.dashboard-file-label.disabled {
+  background-color: #e2e8f0; /* Slightly grayer for disabled state */
+  color: #a0aec0; /* Lighter text for disabled state */
+  cursor: not-allowed;
+}
+
+
+.clear-file-button {
+  /* ... existing styles ... */
+  margin-top: 0.5rem; /* Add some space above the clear button */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) { /* Example breakpoint for smaller screens */
+  .upload-options-container {
+    flex-direction: column; /* Stack them vertically on smaller screens */
+    gap: 1.5rem; /* Adjust gap for vertical layout */
+  }
+
+  .upload-option {
+    width: 100%; /* Make each option take full width when stacked */
+  }
+}
+
 /* Loading animation */
 .fade-in {
   animation: fadeIn 0.6s ease-out;

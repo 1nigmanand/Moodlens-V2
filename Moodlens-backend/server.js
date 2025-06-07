@@ -12,7 +12,7 @@ app.use(express.json());
 // Gemini AI setup
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-pro-latest", 
+    model: "gemini-2.0-flash", 
     generationConfig: { 
         temperature: 0,
         topP: 1,
