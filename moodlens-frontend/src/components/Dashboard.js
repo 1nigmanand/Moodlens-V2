@@ -35,7 +35,17 @@ export default function Dashboard() {
       }
       const firstFilePath = textFiles[0].webkitRelativePath;
       const folderPath = firstFilePath.substring(0, firstFilePath.lastIndexOf('/'));
-      setFolderName(folderPath || "Selected Folder");
+      
+      // If no folder path (files selected without folder structure), use first file name
+      let displayName;
+      if (!folderPath) {
+        // Remove .txt extension from the first file name
+        displayName = textFiles[0].name.replace(/\.txt$/, '');
+      } else {
+        displayName = folderPath;
+      }
+      
+      setFolderName(displayName || "Selected Folder");
       setSelectedFolderFiles(textFiles);
       setInputText("");
       setSelectedFile(null);
@@ -51,10 +61,19 @@ export default function Dashboard() {
     if (selectedFolderFiles.length > 0) {
       source = `folder: ${folderName}`;
       let combinedText = "";
+      let fileContents = []; // Track file contents with their names
+      
       for (const file of selectedFolderFiles) {
         try {
           const fileText = await file.text();
-          combinedText += fileText + "\n\n";
+          if (fileText.trim()) { // Only add non-empty files
+            const fileName = file.name.replace(/\.txt$/, ''); // Remove .txt extension
+            fileContents.push({
+              name: fileName,
+              content: fileText.trim()
+            });
+            combinedText += `[FILE: ${fileName}]\n${fileText}\n\n`;
+          }
         } catch (error) {
           console.error(`Error reading file ${file.name}:`, error);
           alert(`Error reading file ${file.name}. Skipping this file.`);
@@ -82,7 +101,7 @@ export default function Dashboard() {
     console.log(`Analyzing content from ${source}`);
 
     try {
-      const response = await axios.post("https://moodlens-v2.onrender.com/process", { text: textToAnalyze });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000'}/process`, { text: textToAnalyze });
       navigate("/result", { state: { emotionData: response.data.response } });
     } catch (err) {
       console.error("Error analyzing text:", err);

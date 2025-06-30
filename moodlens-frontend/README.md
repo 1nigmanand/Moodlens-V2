@@ -1,6 +1,92 @@
-# Getting Started with Create React App
+# Moodlens Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern React application for emotion analysis and visualization. This frontend provides an intuitive interface for analyzing text emotions using AI-powered backend services.
+
+## Features
+
+- **Emotion Analysis**: Submit text for AI-powered emotion detection
+- **Interactive Dashboard**: Clean, modern interface for text input and analysis
+- **Emotion Visualization**: Charts and visual representations of detected emotions
+- **Responsive Design**: Works seamlessly across different screen sizes
+- **Real-time Results**: Instant emotion analysis with detailed insights
+
+## Tech Stack
+
+- **React 19**: Latest React framework
+- **Tailwind CSS**: Utility-first CSS framework
+- **Chart.js**: Beautiful charts for emotion visualization
+- **React Router**: Client-side routing
+- **Axios**: HTTP client for API communication
+- **Lucide React**: Modern icon library
+
+## Setup
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- Moodlens Backend running on port 3000
+
+### Installation
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Create a `.env` file in the root directory:
+```env
+REACT_APP_BACKEND_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+3. Make sure the backend is running on port 3000
+
+### Running the Application
+
+#### Development Mode
+```bash
+npm start
+```
+Opens [http://localhost:3000](http://localhost:3000) in your browser.
+
+#### Production Build
+```bash
+npm run build
+```
+
+#### Testing
+```bash
+npm test
+```
+
+## Project Structure
+
+```
+moodlens-frontend/
+├── public/             # Static assets
+├── src/
+│   ├── components/     # React components
+│   │   ├── Dashboard.js
+│   │   ├── ResultPage.js
+│   │   ├── Chart.js
+│   │   └── EmotionCard.js
+│   ├── styles/         # CSS files
+│   │   └── Global.css
+│   ├── App.js          # Main App component
+│   └── index.js        # Entry point
+├── tailwind.config.js  # Tailwind configuration
+├── postcss.config.js   # PostCSS configuration
+└── package.json        # Dependencies and scripts
+```
+
+## API Integration
+
+The frontend communicates with the Moodlens backend API:
+
+- **Endpoint**: `POST /process`
+- **Payload**: `{ "text": "your text here" }`
+- **Response**: Structured emotion data with colors, counts, and contexts
 
 ## Available Scripts
 

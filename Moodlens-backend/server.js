@@ -1,6 +1,10 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -86,6 +90,8 @@ CRITICAL: You must return ONLY a valid JSON object. No explanations, no markdown
 
 Task: Identify ALL distinct emotions expressed in the text.
 
+SPECIAL INSTRUCTION FOR FILE MARKERS: If you see text with file markers like "[FILE: filename]", use the filename as the "name_of_person" value for emotions found in that file's content.
+
 Required JSON Structure:
 {
     "EmotionName": {
@@ -95,7 +101,7 @@ Required JSON Structure:
         "count": number,
         "situation": [
             {
-                "name_of_person": "Name or Unknown",
+                "name_of_person": "Name or Unknown or FileName",
                 "reason": "Exact quote from text"
             }
         ]
@@ -108,7 +114,10 @@ MANDATORY RULES:
 3. BorderColor: Use complementary or contrasting hex codes  
 4. Emoji: Single appropriate emoji for each emotion
 5. Count: Must equal the number of objects in situation array
-6. Name_of_person: Use actual names from text or "Unknown" if not mentioned
+6. Name_of_person: 
+   - If text has "[FILE: filename]" markers, use the filename for emotions in that section
+   - Use actual names from text if mentioned
+   - Use "Unknown" only if no name or file marker is found
 7. Reason: Quote exact phrases that indicate the emotion
 8. Output: ONLY JSON object, no markdown blocks, no explanations
 9. Consistency: Same input must produce identical output every time
