@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import '../App.css';
@@ -11,12 +11,6 @@ export default function Dashboard() {
   const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log('Environment Configuration:');
-    console.log('REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
-    console.log('NODE_ENV:', process.env.NODE_ENV);
-  }, []);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -103,9 +97,6 @@ export default function Dashboard() {
       setLoading(false);
       return;
     }
-
-    console.log(`Analyzing content from ${source}`);
-    console.log(`Backend URL: ${process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000'}/process`);
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000'}/process`, { text: textToAnalyze });
